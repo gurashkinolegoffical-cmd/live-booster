@@ -1,0 +1,16 @@
+{
+  "theme": "light",
+  "notifications": true,
+  "tracker_interval": 30,
+  "game_time_threshold": 15,
+  "language": "ru",
+  "sound_enabled": true,
+  "vibration": true,
+  "payday_interval": 60,
+  "vk_token": "",
+  "username": "Oleg_",
+  "rss_feed": "https://t.me/s/lr_dev",
+  "auto_start_game": false,
+  "game_package": "com.liverussia.game.googleplay",
+  "youtube_rss_url": "https://rsshub.app/telegram/channel/lr_dev"
+}
