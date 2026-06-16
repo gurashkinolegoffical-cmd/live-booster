@@ -31,9 +31,8 @@ jobs:
         run: |
           mkdir -p $HOME/.buildozer/android/platform
           cp -r /usr/local/lib/android/sdk $HOME/.buildozer/android/platform/android-sdk
-          # Создаём tools/bin и символическую ссылку на sdkmanager
           mkdir -p $HOME/.buildozer/android/platform/android-sdk/tools/bin
-          ln -sf $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager $HOME/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
+          cp /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager $HOME/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
 
       - name: Install Buildozer
         run: pip install buildozer cython
