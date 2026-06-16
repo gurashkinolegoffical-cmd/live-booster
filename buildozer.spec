@@ -18,7 +18,6 @@ android.minapi = 24
 android.archs = arm64-v8a
 
 requirements = python3, kivy==2.3.0, kivymd==1.1.1, plyer, pyjnius, pillow, requests, schedule, android
-android.hostpython3 = /usr/bin/python3.10
 p4a.branch = develop
 
 icon.filename = assets/icon.png
