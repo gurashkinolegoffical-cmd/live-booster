@@ -27,26 +27,12 @@ jobs:
           cd $HOME/android-sdk/cmdline-tools
           wget -q https://dl.google.com/android/repository/commandlinetools-linux-6514223_latest.zip
           unzip -q commandlinetools-linux-6514223_latest.zip
-          # После распаковки папка может называться cmdline-tools, перемещаем её в latest
-          if [ -d "cmdline-tools" ]; then
-            mv cmdline-tools latest
-          else
-            # Иногда архив распаковывается сразу в текущую папку без подпапки
-            # Проверим, есть ли bin/sdkmanager
-            if [ -f "bin/sdkmanager" ]; then
-              mkdir -p latest
-              mv * latest 2>/dev/null || true
-              # Перемещаем обратно папку latest, чтобы не было конфликта
-              cd ..
-              mv latest/* cmdline-tools/latest/ 2>/dev/null || true
-              rmdir latest
-            fi
-          fi
+          mv cmdline-tools latest
           echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
 
       - name: Accept licenses and install build-tools
         run: |
+          export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
           yes | sdkmanager --sdk_root=$ANDROID_SDK_ROOT --licenses
           sdkmanager --sdk_root=$ANDROID_SDK_ROOT "build-tools;37.0.0" "platforms;android-33"
 
@@ -55,6 +41,8 @@ jobs:
 
       - name: Build APK
         run: buildozer android debug
+        env:
+          ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
