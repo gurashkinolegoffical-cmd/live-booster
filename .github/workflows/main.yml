@@ -23,13 +23,11 @@ jobs:
 
       - name: Setup Android SDK
         run: |
-          # Скачиваем command-line tools
           SDK_DIR=$HOME/android-sdk
           mkdir -p $SDK_DIR/cmdline-tools
           cd $SDK_DIR/cmdline-tools
           wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
           unzip -q commandlinetools-linux-11076708_latest.zip
-          # В этой версии архива папка уже называется "cmdline-tools"
           mv cmdline-tools latest 2>/dev/null || true
           echo "ANDROID_SDK_ROOT=$SDK_DIR" >> $GITHUB_ENV
           echo "$SDK_DIR/cmdline-tools/latest/bin" >> $GITHUB_PATH
@@ -43,6 +41,13 @@ jobs:
       - name: Install build-tools and platform
         run: |
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT "build-tools;37.0.0" "platforms;android-33"
+
+      - name: Install platform-tools manually
+        run: |
+          cd $ANDROID_SDK_ROOT
+          wget -q https://dl.google.com/android/repository/platform-tools-latest-linux.zip
+          unzip -q platform-tools-latest-linux.zip
+          rm platform-tools-latest-linux.zip
 
       - name: Copy SDK to Buildozer expected location
         run: |
