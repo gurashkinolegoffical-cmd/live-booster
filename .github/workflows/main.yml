@@ -16,17 +16,30 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          api-level: 33
-          build-tools: '37.0.0'
-          accept-licenses: 'android-sdk-license,android-sdk-preview-license'
-
       - name: Install system dependencies
         run: |
           sudo apt update
-          sudo apt install -y openjdk-17-jdk zip unzip
+          sudo apt install -y openjdk-17-jdk zip unzip wget
+
+      - name: Setup Android SDK
+        run: |
+          # Устанавливаем SDK-менеджер
+          mkdir -p $HOME/android-sdk/cmdline-tools
+          cd $HOME/android-sdk/cmdline-tools
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-6514223_latest.zip
+          unzip -q commandlinetools-linux-6514223_latest.zip
+          # Внутри архива находится папка cmdline-tools, перемещаем её в latest
+          mv cmdline-tools latest
+          # Добавляем в PATH
+          echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
+          echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+
+      - name: Accept licenses and install build-tools
+        run: |
+          # Принимаем все лицензии
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT --licenses
+          # Устанавливаем необходимые пакеты
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT "build-tools;37.0.0" "platforms;android-33"
 
       - name: Install Buildozer
         run: pip install buildozer cython
@@ -34,7 +47,7 @@ jobs:
       - name: Build APK
         run: buildozer android debug
         env:
-          ANDROID_SDK_ROOT: ${{ steps.setup-android.outputs.sdk-path }}
+          ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
