@@ -52,13 +52,12 @@ jobs:
       - name: Copy SDK to Buildozer expected location
         run: |
           mkdir -p $HOME/.buildozer/android/platform
+          # Копируем весь SDK, включая build-tools, platform-tools, licenses
           cp -r $ANDROID_SDK_ROOT $HOME/.buildozer/android/platform/android-sdk
+          # Buildozer ожидает sdkmanager в tools/bin, создадим и скопируем
           mkdir -p $HOME/.buildozer/android/platform/android-sdk/tools/bin
-          # Копируем настоящий sdkmanager (на всякий случай)
           cp $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager $HOME/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
-          # Делаем sdkmanager заглушкой — он всегда будет возвращать успех, и Buildozer не упадёт
-          echo -e '#!/bin/bash\nexit 0' > $HOME/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
-          chmod +x $HOME/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
+          # Не делаем заглушку! Настоящий sdkmanager останется.
 
       - name: Install Buildozer
         run: pip install buildozer cython
