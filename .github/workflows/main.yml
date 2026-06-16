@@ -27,14 +27,16 @@ jobs:
           echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > $HOME/.android/licenses/android-sdk-license
           echo -e "\nd56f5187479451eabf01fb78af6dfcb131a6481e" > $HOME/.android/licenses/android-sdk-preview-license
 
+      - name: Prepare Buildozer SDK directory
+        run: |
+          mkdir -p $HOME/.buildozer/android/platform
+          cp -r /usr/local/lib/android/sdk $HOME/.buildozer/android/platform/android-sdk
+
       - name: Install Buildozer
         run: pip install buildozer cython
 
       - name: Build APK
         run: buildozer android debug
-        env:
-          ANDROID_HOME: /usr/local/lib/android/sdk
-          ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
